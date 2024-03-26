@@ -92,10 +92,6 @@ abstract class question_edit_form extends question_wizard_form {
     public $fileoptions;
     /** @var object instance of question type */
     public $instance;
-    /** @var object instance of custom field */
-    protected $customfieldhandler;
-    /** @var bool custom field plugin enabled or disabled*/
-    protected $customfieldpluginenabled = true;
 
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
         global $DB;
@@ -120,10 +116,6 @@ abstract class question_edit_form extends question_wizard_form {
 
         $this->category = $category;
         $this->categorycontext = context::instance_by_id($category->contextid);
-
-        if (!\core\plugininfo\qbank::is_plugin_enabled('qbank_customfields')) {
-            $this->customfieldpluginenabled = false;
-        }
 
         parent::__construct($submiturl, null, 'post', '', ['data-qtype' => $this->qtype()], $formeditable);
     }
@@ -265,12 +257,8 @@ abstract class question_edit_form extends question_wizard_form {
             $this->add_tag_fields($mform);
         }
 
-        if ($this->customfieldpluginenabled) {
-            // Add custom fields to the form.
-            $this->customfieldhandler = qbank_customfields\customfield\question_handler::create();
-            $this->customfieldhandler->set_parent_context($this->categorycontext); // For question handler only.
-            $this->customfieldhandler->instance_form_definition($mform, empty($this->question->id) ? 0 : $this->question->id);
-        }
+        $hook = new \core_question\hook\after_form_definition($this, $mform);
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
         $this->add_hidden_fields();
 
@@ -316,10 +304,9 @@ abstract class question_edit_form extends question_wizard_form {
      */
     public function definition_after_data() {
         $mform = $this->_form;
-        if ($this->customfieldpluginenabled) {
-            $this->customfieldhandler->instance_form_definition_after_data($mform,
-                empty($this->question->id) ? 0 : $this->question->id);
-        }
+
+        $hook = new \core_question\hook\after_form_definition_after_data($this, $mform);
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
     }
 
     /**
@@ -901,10 +888,13 @@ abstract class question_edit_form extends question_wizard_form {
             }
         }
 
-        if ($this->customfieldpluginenabled) {
-            // Add the custom field validation.
-            $errors  = array_merge($errors, $this->customfieldhandler->instance_form_validation($fromform, $files));
+        $hook = new \core_question\hook\after_form_validation($this, $fromform, $files);
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
+        $pluginerrors = $hook->get_errors();
+        if (!empty($pluginerrors)) {
+            $errors = array_merge($errors, $pluginerrors);
         }
+
         return $errors;
     }
 
@@ -925,4 +915,34 @@ abstract class question_edit_form extends question_wizard_form {
         return $this->editoroptions;
     }
 
+    /**
+     * Returns context.
+     *
+     * @return \core\context
+     */
+    public function get_context(): \core\context {
+        return $this->context;
+    }
+
+    /**
+     * Returns context.
+     *
+     * @return \core\context
+     */
+    public function get_contexts(): \core_question\local\bank\question_edit_contexts {
+        return $this->contexts;
+    }
+
+    /**
+     * Returns question object.
+     *
+     * @return \StdClass
+     */
+    public function get_question(): \StdClass {
+        return $this->question;
+    }
+
+    public function set_data_additional($default_values): void {
+        parent::set_data($default_values);
+    }
 }
