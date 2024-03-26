@@ -232,10 +232,6 @@ if ($cm !== null) {
 
 $toform->inpopup = $inpopup;
 
-// Prepare custom fields data.
-$customfieldhandler = qbank_customfields\customfield\question_handler::create();
-$customfieldhandler->instance_form_before_set_data($toform);
-
 $mform->set_data($toform);
 
 if ($mform->is_cancelled()) {
@@ -288,7 +284,9 @@ if ($mform->is_cancelled()) {
     }
 
     // If this is a new question, save defaults for user in user_preferences table.
+    $isnewquestion = false;   
     if (empty($question->id)) {
+        $isnewquestion = true;
         $qtypeobj->save_defaults_for_new_questions($fromform);
     }
     $question = $qtypeobj->save_question($question, $fromform);
@@ -304,8 +302,8 @@ if ($mform->is_cancelled()) {
                 context_course::instance($fromform->courseid), $fromform->coursetags, 0);
     }
 
-    // Update custom fields if there are any of them in the form.
-    $customfieldhandler->instance_form_save($fromform);
+    $hook = new \core_question\hook\after_form_submission($fromform, $isnewquestion);
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
     // Purge this question from the cache.
     question_bank::notify_question_edited($question->id);
