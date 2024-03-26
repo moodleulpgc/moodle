@@ -23,6 +23,8 @@ namespace core_question\hook;
  * @copyright  2024 Enrique Castro, ULPGC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Allows plugins to extend saving of the question editing form')]
+#[\core\attribute\tags('question')]
 class after_form_submission {
     /**
      * Creates new hook.

@@ -27,6 +27,8 @@ use question_edit_form;
  * @copyright  2024 Enrique Castro, ULPGC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Allow plugins to extend a validation of the question editing form')]
+#[\core\attribute\tags('question')]
 class after_form_validation {
     /**
      * Plugin errors.

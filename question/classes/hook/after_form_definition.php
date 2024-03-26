@@ -28,6 +28,8 @@ use MoodleQuickForm;
  * @copyright  2024 Enrique Castro, ULPGC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Allows plugins to extend question editing form')]
+#[\core\attribute\tags('question')]
 class after_form_definition {
     /**
      * Creates new hook.
