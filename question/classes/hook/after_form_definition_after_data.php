@@ -28,6 +28,8 @@ use MoodleQuickForm;
  * @copyright  2024 Enrique Castro, ULPGC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Allows plugins to extend question editing form after data is set')]
+#[\core\attribute\tags('question')]
 class after_form_definition_after_data {
     /**
      * Creates new hook.
