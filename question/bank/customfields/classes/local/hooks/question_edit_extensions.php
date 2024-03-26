@@ -68,6 +68,9 @@ class question_edit_extensions {
             return;
         }
 
+        if (!\core\plugininfo\qbank::is_plugin_enabled('qbank_customfields')) {
+            return;
+        }
         $questioncontext = $hook->formwrapper->get_context();
         //$contexts = $hook->formwrapper->get_contexts();
         $question = $hook->formwrapper->get_question();
