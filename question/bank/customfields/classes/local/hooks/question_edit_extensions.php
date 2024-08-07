@@ -31,8 +31,6 @@ use core_question\hook\after_form_submission;
 use core_question\hook\after_form_validation;
 use qbank_customfields\customfield\question_handler;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Meta sync enrolments task.
  *
@@ -48,9 +46,12 @@ class question_edit_extensions {
      * @param \core_question\hook\after_form_definition $hook
      */
     public static function instance_form_definition(after_form_definition $hook): void {
-        $mform = $hook->mform;
 
-        $questioncontext = $hook->formwrapper->get_context();
+        if (!\core\plugininfo\qbank::is_plugin_enabled('qbank_customfields')) {
+            return;
+        }
+
+        $mform = $hook->mform;
         $question = $hook->formwrapper->get_question();
 
         $handler = question_handler::create();
@@ -63,16 +64,11 @@ class question_edit_extensions {
      * @param \core_question\hook\after_form_definition_after_data $hook
      */
     public static function instance_form_definition_after_data(after_form_definition_after_data $hook): void {
-        global $DB;
-        if (!get_config('qbank_customfields', 'version')) {
-            return;
-        }
 
         if (!\core\plugininfo\qbank::is_plugin_enabled('qbank_customfields')) {
             return;
         }
-        $questioncontext = $hook->formwrapper->get_context();
-        //$contexts = $hook->formwrapper->get_contexts();
+
         $question = $hook->formwrapper->get_question();
         $handler = question_handler::create();
 
@@ -82,7 +78,7 @@ class question_edit_extensions {
         $hook->formwrapper->set_data($toform);
 
         $handler->instance_form_definition_after_data($hook->mform,
-                                            empty($question->id) ? 0 : $question->id);
+                                                        empty($question->id) ? 0 : $question->id);
     }
 
     /**
@@ -91,11 +87,11 @@ class question_edit_extensions {
      * @param \core_question\hook\after_form_submission $hook
      */
     public static function instance_form_save(after_form_submission $hook): void {
-        global $DB;
 
-        if (!get_config('qbank_customfields', 'version')) {
+        if (!\core\plugininfo\qbank::is_plugin_enabled('qbank_customfields')) {
             return;
         }
+
         $data = $hook->get_data();
 
         $handler = question_handler::create();
@@ -108,7 +104,8 @@ class question_edit_extensions {
      * @param \core_question\hook\after_form_validation $hook
      */
     public static function instance_form_validation(after_form_validation $hook): void {
-        if (!get_config('qbank_customfields', 'version')) {
+
+        if (!\core\plugininfo\qbank::is_plugin_enabled('qbank_customfields')) {
             return;
         }
 

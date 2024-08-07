@@ -916,18 +916,9 @@ abstract class question_edit_form extends question_wizard_form {
     }
 
     /**
-     * Returns context.
+     * Returns contexts related to the question edited
      *
-     * @return \core\context
-     */
-    public function get_context(): \core\context {
-        return $this->context;
-    }
-
-    /**
-     * Returns context.
-     *
-     * @return \core\context
+     * @return \core_question\local\bank\question_edit_contexts
      */
     public function get_contexts(): \core_question\local\bank\question_edit_contexts {
         return $this->contexts;
@@ -942,7 +933,12 @@ abstract class question_edit_form extends question_wizard_form {
         return $this->question;
     }
 
-    public function set_data_additional($default_values): void {
-        parent::set_data($default_values);
+    /**
+     * Returns form category object.
+     *
+     * @return \StdClass
+     */
+    public function get_category(): \StdClass {
+        return $this->category;
     }
 }
