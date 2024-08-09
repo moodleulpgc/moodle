@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Hook callbacks for Moodle app tools
+ * Hook callbacks for question customfields
+ * Allows customfield to add elements to the question edit form.
  *
  * @package    qbank_customfields
  * @copyright  2024 Enrique Castro, ULPGC

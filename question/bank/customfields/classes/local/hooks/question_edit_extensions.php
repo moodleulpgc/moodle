@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Meta sync enrolments task.
+ * Hook callbacks class for question customfields.
  *
  * @package   qbank_customfields
  * @author    Enrique Castro <@ULPGC>
@@ -32,7 +32,10 @@ use core_question\hook\after_form_validation;
 use qbank_customfields\customfield\question_handler;
 
 /**
- * Meta sync enrolments task.
+ * Hook callbacks class for question customfields
+ * Allows customfield to add elements to the question edit form.
+ * The callback is executed and form elements are added/processed
+ * only when qbank_customfields plugin is enabled
  *
  * @package   qbank_customfields
  * @copyright 2024 Enrique Castro, ULPGC
@@ -77,8 +80,7 @@ class question_edit_extensions {
 
         $hook->formwrapper->set_data($toform);
 
-        $handler->instance_form_definition_after_data($hook->mform,
-                                                        empty($question->id) ? 0 : $question->id);
+        $handler->instance_form_definition_after_data($hook->mform, empty($question->id) ? 0 : $question->id);
     }
 
     /**
